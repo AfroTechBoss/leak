@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
-import { getFileStream } from '@/lib/storage';
+import { downloadFile } from '@/lib/storage';
 import { cookies } from 'next/headers';
-import { Readable } from 'stream';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const cookieStore = cookies();
@@ -24,16 +23,21 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  const stream = await getFileStream(file.storageKey);
+  const buffer = await downloadFile(file.storageKey);
 
   await prisma.auditLog.create({
-    data: { submissionId: file.submissionId, journalistId: journalist.id, action: `File downloaded: ${file.originalName}` },
+    data: {
+      submissionId: file.submissionId,
+      journalistId: journalist.id,
+      action: `File downloaded: ${file.originalName}`,
+    },
   });
 
-  return new NextResponse(stream as unknown as ReadableStream, {
+  return new NextResponse(buffer, {
     headers: {
       'Content-Type': file.mimeType,
       'Content-Disposition': `attachment; filename="${file.originalName}"`,
+      'Content-Length': String(buffer.length),
     },
   });
 }

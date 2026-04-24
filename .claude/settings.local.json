@@ -16,7 +16,14 @@
       "Bash(node scripts/gen-keypair.js)",
       "Bash(docker compose *)",
       "Bash(npx prisma *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npm uninstall *)",
+      "Bash(set \"DATABASE_URL=postgresql://postgres:WEFfaYWhhqxJfCHD@db.xxtizmbfsfjeeygicyhl.supabase.co:5432/postgres?sslmode=require\")",
+      "Bash(node -e ' *)",
+      "Bash(Test-NetConnection -ComputerName \"aws-0-eu-west-1.pooler.supabase.com\" -Port 5432)",
+      "Bash(Select-String -Pattern \"TcpTestSucceeded|Warning\")",
+      "PowerShell(Test-NetConnection -ComputerName \"aws-0-eu-west-1.pooler.supabase.com\" -Port 5432)",
+      "PowerShell($result = Test-NetConnection -ComputerName \"aws-0-eu-west-1.pooler.supabase.com\" -Port 5432; Write-Output \"TCP Success: $\\($result.TcpTestSucceeded\\)\"; Write-Output \"Remote: $\\($result.RemoteAddress\\)\")"
     ]
   }
 }

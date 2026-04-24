@@ -1,31 +1,39 @@
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { supabase } from './supabase';
 
-const s3 = new S3Client({
-  endpoint: process.env.MINIO_ENDPOINT ?? 'http://localhost:9000',
-  region: 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.MINIO_ACCESS_KEY ?? 'leak_minio',
-    secretAccessKey: process.env.MINIO_SECRET_KEY ?? 'leak_minio_secret',
-  },
-  forcePathStyle: true,
-});
-
-const BUCKET = process.env.MINIO_BUCKET ?? 'leak-files';
+const BUCKET = process.env.SUPABASE_BUCKET ?? 'leak-files';
 
 export async function uploadFile(key: string, body: Buffer, contentType: string): Promise<void> {
-  await s3.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: body, ContentType: contentType }));
+  const { error } = await supabase.storage.from(BUCKET).upload(key, body, {
+    contentType,
+    upsert: false,
+  });
+  if (error) throw new Error(`Upload failed: ${error.message}`);
 }
 
-export async function getFileStream(key: string): Promise<NodeJS.ReadableStream> {
-  const res = await s3.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
-  return res.Body as NodeJS.ReadableStream;
+export async function downloadFile(key: string): Promise<Buffer> {
+  const { data, error } = await supabase.storage.from(BUCKET).download(key);
+  if (error) throw new Error(`Download failed: ${error.message}`);
+  const arrayBuffer = await data.arrayBuffer();
+  return Buffer.from(arrayBuffer);
 }
 
-export async function getPresignedUrl(key: string, expiresIn = 300): Promise<string> {
-  return getSignedUrl(s3, new GetObjectCommand({ Bucket: BUCKET, Key: key }), { expiresIn });
+export async function getSignedUrl(key: string, expiresIn = 300): Promise<string> {
+  const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(key, expiresIn);
+  if (error) throw new Error(`Signed URL failed: ${error.message}`);
+  return data.signedUrl;
 }
 
 export async function deleteFile(key: string): Promise<void> {
-  await s3.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
+  const { error } = await supabase.storage.from(BUCKET).remove([key]);
+  if (error) throw new Error(`Delete failed: ${error.message}`);
+}
+
+export async function ensureBucket(): Promise<void> {
+  const { data: buckets } = await supabase.storage.listBuckets();
+  const exists = buckets?.some(b => b.name === BUCKET);
+  if (!exists) {
+    const { error } = await supabase.storage.createBucket(BUCKET, { public: false });
+    if (error) throw new Error(`Bucket creation failed: ${error.message}`);
+    console.log(`✓ Created storage bucket: ${BUCKET}`);
+  }
 }
