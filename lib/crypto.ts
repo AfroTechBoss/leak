@@ -1,7 +1,10 @@
 import nacl from 'tweetnacl';
-import { encodeBase64, decodeBase64, encodeUTF8, decodeUTF8 } from 'tweetnacl-util';
+import { encodeBase64, decodeBase64 } from 'tweetnacl-util';
 
-export function getServerPublicKey(): Uint8Array {
+const encode = (s: string): Uint8Array => new TextEncoder().encode(s);
+const decode = (u: Uint8Array): string => new TextDecoder().decode(u);
+
+function getServerPublicKey(): Uint8Array {
   const key = process.env.SERVER_PUBLIC_KEY;
   if (!key || key === 'base64_encoded_public_key_here') {
     throw new Error('SERVER_PUBLIC_KEY not configured');
@@ -21,52 +24,29 @@ export function encryptForServer(plaintext: string): { encrypted: Uint8Array; no
   const serverPubKey = getServerPublicKey();
   const ephemeralKeypair = nacl.box.keyPair();
   const nonce = nacl.randomBytes(nacl.box.nonceLength);
-  const messageBytes = encodeUTF8(plaintext);
+  const messageBytes = encode(plaintext);
 
-  const encrypted = nacl.box(messageBytes, nonce, serverPubKey, ephemeralKeypair.secretKey);
+  const ciphertext = nacl.box(messageBytes, nonce, serverPubKey, ephemeralKeypair.secretKey);
 
-  // Prepend ephemeral public key to encrypted payload so server can decrypt
-  const combined = new Uint8Array(nacl.box.publicKeyLength + encrypted.length);
+  // Prepend ephemeral public key so server can decrypt
+  const combined = new Uint8Array(nacl.box.publicKeyLength + ciphertext.length);
   combined.set(ephemeralKeypair.publicKey);
-  combined.set(encrypted, nacl.box.publicKeyLength);
+  combined.set(ciphertext, nacl.box.publicKeyLength);
 
   return { encrypted: combined, nonce };
 }
 
-export function decryptFromWhistleblower(combined: Uint8Array, nonce: Uint8Array): string {
+export function decryptFromWhistleblower(combinedBuf: Buffer | Uint8Array, nonceBuf: Buffer | Uint8Array): string {
   const serverSecretKey = getServerSecretKey();
+  const combined = combinedBuf instanceof Buffer ? new Uint8Array(combinedBuf) : combinedBuf;
+  const nonce = nonceBuf instanceof Buffer ? new Uint8Array(nonceBuf) : nonceBuf;
+
   const ephemeralPubKey = combined.slice(0, nacl.box.publicKeyLength);
   const ciphertext = combined.slice(nacl.box.publicKeyLength);
 
   const decrypted = nacl.box.open(ciphertext, nonce, ephemeralPubKey, serverSecretKey);
   if (!decrypted) throw new Error('Decryption failed');
-  return decodeUTF8(decrypted);
-}
-
-export function encryptSymmetric(plaintext: string): { encrypted: Uint8Array; nonce: Uint8Array } {
-  const key = nacl.randomBytes(nacl.secretbox.keyLength);
-  const nonce = nacl.randomBytes(nacl.secretbox.nonceLength);
-  const encrypted = nacl.secretbox(encodeUTF8(plaintext), nonce, key);
-  // Prepend key (wrapped by server pub key) — for simplicity using server secret key here
-  // In production, wrap this key with the server's public key
-  const serverSecretKey = getServerSecretKey();
-  const wrappedKey = nacl.secretbox(key, nonce, serverSecretKey.slice(0, 32));
-  const combined = new Uint8Array(wrappedKey.length + encrypted.length);
-  combined.set(wrappedKey);
-  combined.set(encrypted, wrappedKey.length);
-  return { encrypted: combined, nonce };
-}
-
-export function decryptSymmetric(combined: Uint8Array, nonce: Uint8Array): string {
-  const serverSecretKey = getServerSecretKey();
-  const keyLength = nacl.secretbox.keyLength + 16; // secretbox overhead
-  const wrappedKey = combined.slice(0, keyLength);
-  const ciphertext = combined.slice(keyLength);
-  const key = nacl.secretbox.open(wrappedKey, nonce, serverSecretKey.slice(0, 32));
-  if (!key) throw new Error('Key decryption failed');
-  const plaintext = nacl.secretbox.open(ciphertext, nonce, key);
-  if (!plaintext) throw new Error('Decryption failed');
-  return decodeUTF8(plaintext);
+  return decode(decrypted);
 }
 
 export function generateServerKeypair(): { publicKey: string; secretKey: string } {

@@ -8,14 +8,13 @@ export async function stripMetadata(buffer: Buffer, mimeType: string): Promise<B
   if (mimeType === 'application/pdf') {
     return stripPdfMetadata(buffer);
   }
-  // For other file types (docx, mp4, etc.) return as-is for now
-  // Production: use LibreOffice headless for Office docs, ffmpeg for video
+  // Other file types returned as-is (production: LibreOffice for docs, ffmpeg for video)
   return buffer;
 }
 
 async function stripImageMetadata(buffer: Buffer): Promise<Buffer> {
   return sharp(buffer)
-    .withMetadata({ exif: {}, icc: undefined, iptc: undefined, xmp: undefined })
+    .withMetadata({ exif: {} })
     .toBuffer();
 }
 

@@ -15,7 +15,8 @@
       "Bash(npm install *)",
       "Bash(node scripts/gen-keypair.js)",
       "Bash(docker compose *)",
-      "Bash(npx prisma *)"
+      "Bash(npx prisma *)",
+      "Bash(npx tsc *)"
     ]
   }
 }
