@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #07080a;
+  --bg-raised: #0d0f13;
+  --bg-card: #111316;
+  --bg-hover: #181b21;
+  --border: rgba(255,255,255,0.07);
+  --border-strong: rgba(255,255,255,0.13);
+  --text: #dde1e8;
+  --text-dim: #6b7585;
+  --text-muted: #2e333c;
+  --accent: oklch(0.78 0.14 68);
+  --accent-dim: oklch(0.78 0.14 68 / 0.12);
+  --accent-border: oklch(0.78 0.14 68 / 0.3);
+  --green: oklch(0.72 0.15 145);
+  --green-dim: oklch(0.72 0.15 145 / 0.12);
+  --red: oklch(0.62 0.18 25);
+  --red-dim: oklch(0.62 0.18 25 / 0.12);
+  --blue: oklch(0.72 0.15 240);
+  --blue-dim: oklch(0.72 0.15 240 / 0.12);
+  --sans: 'Sora', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+.fade-in { animation: fadeIn 0.28s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes beaconPulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent); } 60% { opacity: 0.6; box-shadow: 0 0 0 5px transparent; } }
+
+.h-1 { animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.05s both; }
+.h-2 { animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.18s both; }
+.h-3 { animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.32s both; }
+.h-4 { animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.46s both; }
+.h-5 { animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.58s both; }
+
+button { cursor: pointer; font-family: var(--sans); }
+input, textarea, select { font-family: var(--sans); }
+
+.btn-primary {
+  background: var(--accent); color: #07080a;
+  border: none; padding: 12px 28px; font-size: 14px;
+  font-weight: 600; letter-spacing: 0.01em; cursor: pointer;
+  transition: opacity 0.15s; display: inline-block;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.32; cursor: not-allowed; }
+
+.btn-ghost {
+  background: transparent; color: var(--text-dim);
+  border: 1px solid var(--border-strong); padding: 11px 20px;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.btn-ghost:hover { color: var(--text); background: var(--bg-hover); }
+
+.field-label {
+  display: block; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 8px; font-family: var(--mono);
+}
+
+.field-input {
+  width: 100%; background: var(--bg-card); border: 1px solid var(--border-strong);
+  color: var(--text); padding: 12px 16px; font-size: 14px;
+  font-family: var(--sans); outline: none; transition: border-color 0.15s;
+}
+.field-input:focus { border-color: var(--accent-border); }
+.field-input::placeholder { color: var(--text-muted); }
+textarea.field-input { resize: vertical; min-height: 140px; }
+select.field-input {
+  appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7585' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.badge {
+  display: inline-block; padding: 3px 10px; font-size: 11px;
+  font-weight: 600; letter-spacing: 0.06em; font-family: var(--mono);
+}
+.badge-new      { background: var(--accent-dim); color: var(--accent); }
+.badge-review   { background: var(--blue-dim);   color: var(--blue); }
+.badge-open     { background: var(--green-dim);  color: var(--green); }
+.badge-rejected { background: var(--red-dim);    color: var(--red); }
+.badge-published{ background: var(--green-dim);  color: var(--green); }
+.badge-archived { background: rgba(255,255,255,0.05); color: var(--text-dim); }
