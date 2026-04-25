@@ -6,9 +6,15 @@ const secret = new TextEncoder().encode(
 );
 
 const JOURNALIST_PATHS = ['/journalist/dashboard', '/journalist/submission'];
+// /journalist/invite is intentionally public — no auth required
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // Exclude invite accept pages from journalist auth guard
+  if (pathname.startsWith('/journalist/invite')) return NextResponse.next();
+  if (pathname === '/api/journalist/invite') return NextResponse.next();
+
   const isJournalistPage = JOURNALIST_PATHS.some(p => pathname.startsWith(p));
   const isJournalistApi = pathname.startsWith('/api/journalist/submissions') ||
     (pathname.startsWith('/api/journalist/submission') && !pathname.includes('/auth')) ||
@@ -32,5 +38,10 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/journalist/dashboard/:path*', '/journalist/submission/:path*', '/api/journalist/:path*'],
+  matcher: [
+    '/journalist/dashboard/:path*',
+    '/journalist/submission/:path*',
+    '/journalist/invite/:path*',
+    '/api/journalist/:path*',
+  ],
 };

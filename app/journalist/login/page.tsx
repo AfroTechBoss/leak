@@ -36,24 +36,29 @@ export default function JournalistLoginPage() {
           <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-dim)', letterSpacing: '0.12em' }}>JOURNALIST PORTAL</div>
         </div>
 
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-strong)', padding: '36px 32px' }}>
+        <form
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-strong)', padding: '36px 32px' }}
+          onSubmit={e => {
+            e.preventDefault();
+            handleLogin();
+          }}
+        >
           <div style={{ marginBottom: 20 }}>
             <label className="field-label">Email</label>
-            <input className="field-input" type="email" placeholder="you@premiumtimes.com"
+            <input className="field-input" type="email" placeholder="you@premiumtimes.com" autoComplete="email"
               value={email} onChange={e => setEmail(e.target.value)} />
           </div>
           <div style={{ marginBottom: 28 }}>
             <label className="field-label">Password</label>
-            <input className="field-input" type="password" placeholder="••••••••••••"
-              value={pass} onChange={e => setPass(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleLogin()} />
+            <input className="field-input" type="password" placeholder="••••••••••••" autoComplete="current-password"
+              value={pass} onChange={e => setPass(e.target.value)} />
           </div>
           {error && <div style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--red)', marginBottom: 16 }}>{error}</div>}
-          <button className="btn-primary" style={{ width: '100%' }}
-            onClick={handleLogin} disabled={loading || !email || !pass}>
+          <button type="submit" className="btn-primary" style={{ width: '100%' }}
+            disabled={loading || !email || !pass}>
             {loading ? 'Authenticating…' : 'Sign in →'}
           </button>
-        </div>
+        </form>
 
         <div style={{ marginTop: 20, fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.7 }}>
           Access is restricted to verified journalists at partner organisations.<br />Contact your editor to request credentials.

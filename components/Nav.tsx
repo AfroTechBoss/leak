@@ -16,6 +16,7 @@ export default function Nav() {
         letterSpacing: '0.2em', color: 'var(--text)', textDecoration: 'none',
       }}>LEAK</Link>
       <div style={{ display: 'flex', gap: 8 }}>
+        <Link href="/about" className="btn-ghost" style={{ padding: '7px 16px' }}>About</Link>
         <Link href="/status" className="btn-ghost" style={{ padding: '7px 16px' }}>Check Status</Link>
         <Link href="/journalist/login" className="btn-ghost" style={{ padding: '7px 16px' }}>Journalist Login</Link>
       </div>

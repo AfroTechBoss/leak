@@ -36,24 +36,12 @@ export default function LandingPage() {
           <h1 style={{
             fontFamily: 'var(--mono)', fontSize: 'clamp(80px, 15vw, 148px)',
             fontWeight: 500, letterSpacing: '0.2em', color: 'var(--text)', lineHeight: 1,
+            margin: 0,
             textShadow: '0 0 120px oklch(0.78 0.14 68 / 0.18)',
           }}>LEAK</h1>
         </div>
 
-        <div className="h-3" style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 28, width: '100%', maxWidth: 480 }}>
-          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-          <p style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)', letterSpacing: '0.12em', whiteSpace: 'nowrap', fontStyle: 'italic' }}>
-            Evidence in. Accountability out.
-          </p>
-          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-        </div>
-
-        <p className="h-4" style={{ fontSize: 15, color: 'var(--text-dim)', lineHeight: 1.85, marginBottom: 52, maxWidth: 480 }}>
-          A secure, anonymous submission pipeline connecting whistleblowers with verified investigative journalists in Nigeria.{' '}
-          <span style={{ color: 'var(--text)', fontWeight: 500 }}>No accounts. No tracking. No exposure.</span>
-        </p>
-
-        <div className="h-5" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="h-5" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 150 }}>
           <Link href="/submit" className="btn-primary" style={{ padding: '16px 44px', fontSize: 15 }}>
             Submit Evidence
           </Link>
@@ -129,6 +117,41 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
+
+      {/* Footer */}
+      <footer style={{
+        borderTop: '1px solid var(--border)',
+        padding: '28px 32px 34px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 18,
+        flexWrap: 'wrap',
+      }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-muted)', letterSpacing: '0.08em' }}>
+          Copyright (2026) LEAK
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <a
+            href="https://twitter.com/leakplatform"
+            target="_blank"
+            rel="noreferrer"
+            style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)', letterSpacing: '0.08em' }}
+          >
+            Twitter
+          </a>
+          <Link href="/privacy" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)', letterSpacing: '0.08em' }}>
+            Privacy
+          </Link>
+          <Link href="/about" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)', letterSpacing: '0.08em' }}>
+            About
+          </Link>
+          <a href="mailto:contact@leak.ng" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)', letterSpacing: '0.08em' }}>
+            contact@leak.ng
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }

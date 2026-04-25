@@ -9,7 +9,12 @@ export async function GET(req: NextRequest) {
 
   try {
     const submissions = await prisma.submission.findMany({
-      include: { messages: { orderBy: { createdAt: 'asc' } } },
+      include: {
+        messages: {
+          orderBy: { createdAt: 'asc' },
+          include: { files: true },
+        },
+      },
     });
 
     const match = await Promise.all(
@@ -27,10 +32,12 @@ export async function GET(req: NextRequest) {
       let text = '';
       try { text = decryptFromWhistleblower(m.encryptedBody, m.encryptedNonce); } catch { text = '[encrypted]'; }
       return {
+        id: m.id,
         from: m.sender.toLowerCase(),
         time: m.createdAt.toLocaleDateString('en-NG', { day: 'numeric', month: 'short' }) + ' · ' +
           m.createdAt.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit', hour12: false }),
         text,
+        files: m.files.map(f => ({ id: f.id, name: f.originalName, mimeType: f.mimeType, sizeBytes: f.sizeBytes })),
       };
     });
 

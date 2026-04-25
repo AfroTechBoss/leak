@@ -18,8 +18,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   const sub = await prisma.submission.findUnique({
     where: { id: params.id },
     include: {
-      files: true,
-      messages: { orderBy: { createdAt: 'asc' } },
+      files: { where: { messageId: null } },   // evidence files only (top section)
+      messages: {
+        orderBy: { createdAt: 'asc' },
+        include: { files: true },               // attachments per message
+      },
       auditLogs: { orderBy: { createdAt: 'asc' } },
     },
   });
@@ -40,6 +43,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       time: m.createdAt.toLocaleDateString('en-NG', { day: 'numeric', month: 'short' }) + ' · ' +
         m.createdAt.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit', hour12: false }),
       text,
+      files: m.files.map(f => ({ id: f.id, name: f.originalName, mimeType: f.mimeType, sizeBytes: f.sizeBytes })),
     };
   });
 

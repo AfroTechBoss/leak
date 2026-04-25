@@ -33,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     },
   });
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': file.mimeType,
       'Content-Disposition': `attachment; filename="${file.originalName}"`,

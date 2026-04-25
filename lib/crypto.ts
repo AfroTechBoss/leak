@@ -4,20 +4,40 @@ import { encodeBase64, decodeBase64 } from 'tweetnacl-util';
 const encode = (s: string): Uint8Array => new TextEncoder().encode(s);
 const decode = (u: Uint8Array): string => new TextDecoder().decode(u);
 
+let devBoxKeypair: nacl.BoxKeyPair | null = null;
+
+function devKeys(): nacl.BoxKeyPair {
+  if (!devBoxKeypair) {
+    devBoxKeypair = nacl.box.keyPair();
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[crypto] Using ephemeral dev NaCl keypair. Set SERVER_PUBLIC_KEY and SERVER_SECRET_KEY (see npm run keypair).'
+      );
+    }
+  }
+  return devBoxKeypair;
+}
+
 function getServerPublicKey(): Uint8Array {
   const key = process.env.SERVER_PUBLIC_KEY;
-  if (!key || key === 'base64_encoded_public_key_here') {
-    throw new Error('SERVER_PUBLIC_KEY not configured');
+  if (key && key !== 'base64_encoded_public_key_here') {
+    return decodeBase64(key);
   }
-  return decodeBase64(key);
+  if (process.env.NODE_ENV !== 'production') {
+    return devKeys().publicKey;
+  }
+  throw new Error('SERVER_PUBLIC_KEY not configured');
 }
 
 function getServerSecretKey(): Uint8Array {
   const key = process.env.SERVER_SECRET_KEY;
-  if (!key || key === 'base64_encoded_secret_key_here') {
-    throw new Error('SERVER_SECRET_KEY not configured');
+  if (key && key !== 'base64_encoded_secret_key_here') {
+    return decodeBase64(key);
   }
-  return decodeBase64(key);
+  if (process.env.NODE_ENV !== 'production') {
+    return devKeys().secretKey;
+  }
+  throw new Error('SERVER_SECRET_KEY not configured');
 }
 
 export function encryptForServer(plaintext: string): { encrypted: Uint8Array; nonce: Uint8Array } {
