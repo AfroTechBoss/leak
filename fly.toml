@@ -1,5 +1,5 @@
 app = 'leak'
-primary_region = 'lhr'
+primary_region = 'fra'
 
 [build]
   dockerfile = "Dockerfile"

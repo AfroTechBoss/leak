@@ -106,7 +106,7 @@ export default function SubmissionDetailPage() {
         background: 'rgba(7,8,10,0.95)', backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--border)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 32px', height: 56,
+        padding: '0 24px', height: 56,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <Link href="/journalist/dashboard" style={{ color: 'var(--text-dim)', cursor: 'pointer', fontSize: 13, textDecoration: 'none' }}>← Queue</Link>
@@ -122,13 +122,13 @@ export default function SubmissionDetailPage() {
         </div>
       </div>
 
-      <div className="fade-in" style={{ maxWidth: 1200, margin: '0 auto', padding: '32px', display: 'grid', gridTemplateColumns: '1fr 420px', gap: 24, alignItems: 'start' }}>
+      <div className="fade-in sub-layout" style={{ maxWidth: 1200, margin: '0 auto', padding: '32px' }}>
 
         {/* Left: submission content */}
         <div>
           {/* Meta */}
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', marginBottom: 20 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
+            <div className="sub-meta-grid">
               {[
                 { label: 'Category', value: sub.category },
                 { label: 'State',    value: sub.state },
@@ -179,7 +179,7 @@ export default function SubmissionDetailPage() {
         </div>
 
         {/* Right: messaging + audit */}
-        <div style={{ position: 'sticky', top: 72 }}>
+        <div className="sub-sidebar">
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
               <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-dim)', letterSpacing: '0.1em' }}>SECURE MESSAGE THREAD</div>

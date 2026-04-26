@@ -52,13 +52,13 @@ export default function LandingPage() {
       </div>
 
       {/* Trust bar */}
-      <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+      <div className="trust-grid">
         {[
           { label: 'Zero Accounts', desc: 'No email, phone, or identity required' },
           { label: 'No IP Logging',  desc: 'Your network location is never stored' },
           { label: 'E2E Encrypted',  desc: 'Operators cannot read submission content' },
         ].map((item, i) => (
-          <div key={i} style={{ padding: '30px 36px', borderRight: i < 2 ? '1px solid var(--border)' : 'none', textAlign: 'center' }}>
+          <div key={i} className="trust-item">
             <div style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 500, letterSpacing: '0.1em', color: 'var(--accent)', marginBottom: 7 }}>{item.label}</div>
             <div style={{ fontSize: 13, color: 'var(--text-dim)' }}>{item.desc}</div>
           </div>
@@ -66,13 +66,13 @@ export default function LandingPage() {
       </div>
 
       {/* How it works */}
-      <div style={{ padding: '80px 32px', maxWidth: 1040, margin: '0 auto', width: '100%' }}>
+      <div style={{ padding: '80px 32px', maxWidth: 1040, margin: '0 auto', width: '100%' }} className="page-pad">
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 48 }}>
           <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
           <div style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.18em', color: 'var(--text-dim)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>How it works</div>
           <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+        <div className="how-grid">
           {[
             { n: '01', title: 'Submit evidence',        body: 'Upload files, describe what you witnessed, and select your state. No account or identity required at any step.' },
             { n: '02', title: 'Receive your Case Code', body: 'One unique code is generated. It is your only identifier. Save it securely — it cannot be recovered if lost.' },
@@ -92,14 +92,14 @@ export default function LandingPage() {
       </div>
 
       {/* Stats */}
-      <div style={{ borderTop: '1px solid var(--border)', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderBottom: '1px solid var(--border)' }}>
+      <div className="stats-grid">
         {[
           { value: '2,400+', label: 'Submissions received' },
           { value: '38',     label: 'Published investigations' },
           { value: '4',      label: 'Partner newsrooms' },
           { value: '0',      label: 'Source identities exposed' },
         ].map((stat, i) => (
-          <div key={i} style={{ padding: '32px 28px', borderRight: i < 3 ? '1px solid var(--border)' : 'none', textAlign: 'center' }}>
+          <div key={i} className="stat-cell">
             <div style={{ fontFamily: 'var(--mono)', fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 500, color: i === 3 ? 'var(--green)' : 'var(--text)', marginBottom: 6 }}>{stat.value}</div>
             <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-dim)', letterSpacing: '0.08em' }}>{stat.label}</div>
           </div>

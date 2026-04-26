@@ -57,14 +57,14 @@ export default function JournalistDashboardPage() {
         background: 'rgba(7,8,10,0.95)', backdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--border)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 56 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 16, letterSpacing: '0.18em' }}>LEAK</div>
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-dim)', letterSpacing: '0.1em' }}>JOURNALIST DASHBOARD</div>
-          </div>
+        <div className="dash-header-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 56 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: 16, letterSpacing: '0.18em' }}>LEAK</div>
+            <div className="dash-journalist-info" style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--text-dim)', letterSpacing: '0.1em' }}>JOURNALIST DASHBOARD</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {journalist && (
-              <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)' }}>
+              <span className="dash-journalist-info" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)' }}>
                 {journalist.name} · {journalist.newsroom}
               </span>
             )}
@@ -76,9 +76,9 @@ export default function JournalistDashboardPage() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }} className="page-pad">
         {/* Stats */}
-        <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--border)', marginTop: 32, marginBottom: 32 }}>
+        <div className="fade-in dash-stats-grid" style={{ marginTop: 32, marginBottom: 32 }}>
           {[
             { label: 'New',              value: stats.new,        color: 'var(--accent)' },
             { label: 'Under Review',     value: stats.underReview, color: 'var(--blue)' },
@@ -99,7 +99,7 @@ export default function JournalistDashboardPage() {
               background: filter === s ? 'var(--accent)' : 'transparent',
               color: filter === s ? '#07080a' : 'var(--text-dim)',
               border: `1px solid ${filter === s ? 'var(--accent)' : 'var(--border-strong)'}`,
-              padding: '7px 16px', fontSize: 13, cursor: 'pointer',
+              padding: '7px 14px', fontSize: 12, cursor: 'pointer',
               fontFamily: 'var(--sans)', fontWeight: filter === s ? 600 : 400,
               transition: 'all 0.15s',
             }}>{s === 'All' ? 'All' : STATUS_LABELS[s]}</button>
@@ -108,29 +108,23 @@ export default function JournalistDashboardPage() {
 
         {/* Table */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '160px 160px 110px 120px 1fr 120px', padding: '12px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div className="dash-table-header">
             {['Case Code', 'Category', 'State', 'Date', 'Preview', 'Status'].map(h => (
               <div key={h} style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.08em', color: 'var(--text-dim)' }}>{h}</div>
             ))}
           </div>
           {filtered.map(sub => (
-            <Link key={sub.id} href={`/journalist/submission/${sub.id}`} style={{
-              display: 'grid', gridTemplateColumns: '160px 160px 110px 120px 1fr 120px',
-              padding: '16px 20px', borderBottom: '1px solid var(--border)',
-              cursor: 'pointer', transition: 'background 0.1s', alignItems: 'center',
-              textDecoration: 'none', color: 'inherit',
-            }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            <Link key={sub.id} href={`/journalist/submission/${sub.id}`}
+              className="dash-table-row"
             >
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--accent)', letterSpacing: '0.05em' }}>{sub.caseCodePreview}</div>
-              <div style={{ fontSize: 13, color: 'var(--text)', paddingRight: 8 }}>{sub.category}</div>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)' }}>{sub.state}</div>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)' }}>
+              <div className="dash-cell-case" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--accent)', letterSpacing: '0.05em' }}>{sub.caseCodePreview}</div>
+              <div className="dash-cell-cat" style={{ fontSize: 13, color: 'var(--text)', paddingRight: 8 }}>{sub.category}</div>
+              <div className="dash-cell-state" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)' }}>{sub.state}</div>
+              <div className="dash-cell-date" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text-dim)' }}>
                 {new Date(sub.createdAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}
               </div>
-              <div style={{ fontSize: 13, color: 'var(--text-dim)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 16 }}>{sub.preview}</div>
-              <div><span className={`badge ${STATUS_BADGE[sub.status] || 'badge-new'}`}>{STATUS_LABELS[sub.status] || sub.status}</span></div>
+              <div className="dash-cell-preview" style={{ fontSize: 13, color: 'var(--text-dim)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 16 }}>{sub.preview}</div>
+              <div className="dash-cell-status"><span className={`badge ${STATUS_BADGE[sub.status] || 'badge-new'}`}>{STATUS_LABELS[sub.status] || sub.status}</span></div>
             </Link>
           ))}
           {filtered.length === 0 && (

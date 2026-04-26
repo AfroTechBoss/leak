@@ -7,13 +7,13 @@ function createTransport() {
   return nodemailer.createTransport({
     host:   process.env.SMTP_HOST,
     port:   Number(process.env.SMTP_PORT ?? 587),
-    secure: process.env.SMTP_SECURE === 'true',   // true = port 465 TLS, false = STARTTLS
+    secure: process.env.SMTP_SECURE === 'true',
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
     tls: {
-      rejectUnauthorized: false,  // allow self-signed certs (common on shared hosting)
+      rejectUnauthorized: false,
     },
   });
 }
@@ -38,55 +38,238 @@ export async function sendInviteEmail({
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>You've been invited to LEAK</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    body { margin: 0; padding: 0; background: #07080a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-    .wrapper { max-width: 560px; margin: 40px auto; padding: 0 24px; }
-    .card { background: #0e0f11; border: 1px solid #1e1f22; border-top: 2px solid #c8924a; padding: 40px 40px 36px; }
-    .logo { font-family: 'Courier New', monospace; font-size: 20px; font-weight: 500; letter-spacing: 0.2em; color: #f0ebe0; margin-bottom: 32px; }
-    .greeting { font-size: 22px; font-weight: 600; color: #f0ebe0; letter-spacing: -0.01em; margin-bottom: 16px; }
-    .body { font-size: 15px; color: #8a8070; line-height: 1.8; margin-bottom: 16px; }
-    .btn { display: inline-block; background: #c8924a; color: #07080a; font-weight: 600; font-size: 15px; padding: 14px 32px; text-decoration: none; letter-spacing: 0.02em; margin: 24px 0; }
-    .link-fallback { font-family: 'Courier New', monospace; font-size: 12px; color: #5a5040; word-break: break-all; margin-top: 8px; }
-    .divider { height: 1px; background: #1e1f22; margin: 28px 0; }
-    .footer { font-family: 'Courier New', monospace; font-size: 11px; color: #3a3530; letter-spacing: 0.08em; text-align: center; margin-top: 24px; }
-    .warning { font-size: 13px; color: #5a5040; line-height: 1.7; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #07080a;
+      font-family: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding: 40px 16px 60px;
+    }
+    .wrapper { max-width: 560px; margin: 0 auto; }
+
+    /* — Top wordmark — */
+    .wordmark {
+      font-family: 'DM Mono', 'Courier New', 'Lucida Console', monospace;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      color: #6b7585;
+      margin-bottom: 28px;
+      display: block;
+    }
+
+    /* — Card — */
+    .card {
+      background: #0e0f11;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-top: 2px solid #c8924a;
+      padding: 40px 40px 36px;
+    }
+
+    /* — Inside card header — */
+    .card-logo {
+      font-family: 'DM Mono', 'Courier New', 'Lucida Console', monospace;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: #dde1e8;
+      margin-bottom: 28px;
+      display: block;
+    }
+    .eyebrow {
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      color: #c8924a;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .eyebrow-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: #c8924a;
+      border-radius: 50%;
+    }
+    .greeting {
+      font-size: 24px;
+      font-weight: 600;
+      color: #dde1e8;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-bottom: 20px;
+    }
+
+    /* — Info card — */
+    .info-card {
+      background: #111316;
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 16px 20px;
+      margin: 24px 0;
+      display: table;
+      width: 100%;
+    }
+    .info-row { display: table-row; }
+    .info-label {
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: #6b7585;
+      text-transform: uppercase;
+      padding: 6px 20px 6px 0;
+      display: table-cell;
+      white-space: nowrap;
+    }
+    .info-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: #dde1e8;
+      padding: 6px 0;
+      display: table-cell;
+    }
+
+    /* — Body text — */
+    .body-text {
+      font-size: 14px;
+      color: #6b7585;
+      line-height: 1.85;
+      margin-bottom: 14px;
+    }
+    .body-text strong { color: #dde1e8; font-weight: 500; }
+
+    /* — CTA button — */
+    .btn-wrap { margin: 28px 0 20px; }
+    .btn {
+      display: inline-block;
+      background: #c8924a;
+      color: #07080a !important;
+      font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      padding: 14px 36px;
+      text-decoration: none;
+    }
+
+    /* — Link fallback — */
+    .link-box {
+      background: #111316;
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 12px 16px;
+      margin-top: 16px;
+    }
+    .link-label {
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: #6b7585;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .link-url {
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: 11px;
+      color: #c8924a;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+
+    /* — Divider — */
+    .divider { height: 1px; background: rgba(255,255,255,0.07); margin: 28px 0; }
+
+    /* — Warning — */
+    .warning {
+      font-size: 12px;
+      color: #2e333c;
+      line-height: 1.75;
+    }
+
+    /* — Footer — */
+    .footer {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer-line { flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
+    .footer-text {
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: #2e333c;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
   <div class="wrapper">
+
+    <span class="wordmark">LEAK</span>
+
     <div class="card">
-      <div class="logo">LEAK</div>
+
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        Journalist Invite
+      </div>
+
       <div class="greeting">Welcome, ${name}.</div>
-      <p class="body">
-        You have been invited to join the LEAK platform as a verified journalist for
-        <strong style="color: #f0ebe0;">${newsroom}</strong>.
+
+      <p class="body-text">
+        You have been invited to join the <strong>LEAK</strong> platform as a
+        verified journalist for <strong>${newsroom}</strong>.
       </p>
-      <p class="body">
-        LEAK is a secure whistleblowing platform that routes anonymous tips from sources
-        to investigative journalists. You will receive submissions, communicate with
-        sources, and manage case investigations — all through an encrypted interface.
+      <p class="body-text">
+        LEAK is a secure whistleblowing pipeline that routes anonymous tips to
+        investigative journalists. You will receive submissions, communicate with
+        sources, and manage case investigations — all through an end-to-end
+        encrypted interface.
       </p>
-      <p class="body">
-        Click the button below to set your password and activate your account.
-        This link expires in <strong style="color: #f0ebe0;">48 hours</strong>.
+      <p class="body-text">
+        Click below to set your password and activate your account.
+        This link expires in <strong>48 hours</strong>.
       </p>
 
-      <a href="${link}" class="btn">Set my password →</a>
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">${to}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Newsroom</span>
+          <span class="info-value">${newsroom}</span>
+        </div>
+      </div>
 
-      <p class="link-fallback">
-        If the button doesn't work, copy and paste this link into your browser:<br/>
-        ${link}
-      </p>
+      <div class="btn-wrap">
+        <a href="${link}" class="btn">Activate my account →</a>
+      </div>
+
+      <div class="link-box">
+        <div class="link-label">Or copy this link into your browser</div>
+        <div class="link-url">${link}</div>
+      </div>
 
       <div class="divider"></div>
 
       <p class="warning">
         If you did not expect this invitation or do not recognise this platform,
-        you can safely ignore this email. No account will be created unless you
-        click the link above.
+        you can safely ignore this email. No account will be created unless
+        you click the link above.
       </p>
     </div>
-    <div class="footer">LEAK PLATFORM &nbsp;·&nbsp; SECURE &nbsp;·&nbsp; ANONYMOUS &nbsp;·&nbsp; END-TO-END ENCRYPTED</div>
+
+    <div class="footer">
+      <div class="footer-line"></div>
+      <div class="footer-text">SECURE · ANONYMOUS · E2E ENCRYPTED</div>
+      <div class="footer-line"></div>
+    </div>
+
   </div>
 </body>
 </html>
@@ -97,7 +280,7 @@ Welcome to LEAK, ${name}.
 
 You have been invited to join the LEAK platform as a verified journalist for ${newsroom}.
 
-Set your password and activate your account here:
+Activate your account here:
 ${link}
 
 This link expires in 48 hours.
