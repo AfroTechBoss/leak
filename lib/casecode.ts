@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // 200-word subset of the EFF short wordlist — memorable, unambiguous characters only
 const WORDS = [
