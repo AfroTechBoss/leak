@@ -42,3 +42,10 @@ next-env.d.ts
 
 # editor / tool config
 .claude/
+
+# git history — not needed in image
+.git/
+
+# docs
+*.md
+README*

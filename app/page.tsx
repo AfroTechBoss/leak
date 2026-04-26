@@ -3,13 +3,13 @@ import Link from 'next/link';
 
 export default function LandingPage() {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div>
       <Nav />
 
-      {/* Hero */}
+      {/* Hero — full viewport height, content centered */}
       <div style={{
-        flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-        justifyContent: 'center', padding: '130px 24px 80px', textAlign: 'center',
+        minHeight: '100svh', display: 'flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center', padding: '80px 24px', textAlign: 'center',
         position: 'relative', overflow: 'hidden',
       }}>
         <div style={{
