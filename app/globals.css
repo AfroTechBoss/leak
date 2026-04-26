@@ -265,6 +265,14 @@ select.field-input {
 
   /* General padding */
   .page-pad { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* Hero badge — smaller text + tighter spacing */
+  .h-1 { font-size: 9px !important; letter-spacing: 0.1em !important; }
+
+  /* Hero buttons — side by side, compact */
+  .h-5 { margin-top: 60px !important; gap: 8px !important; flex-wrap: nowrap !important; align-items: center !important; }
+  .h-5 .btn-primary { padding: 9px 16px !important; font-size: 13px !important; }
+  .h-5 .btn-ghost   { padding: 8px 12px !important; font-size: 13px !important; }
 }
 
 @media (max-width: 480px) {
