@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const secret = new TextEncoder().encode(
   process.env.JWT_SECRET ?? 'dev-secret-change-in-production'
